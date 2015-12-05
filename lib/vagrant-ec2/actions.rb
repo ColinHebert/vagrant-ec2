@@ -11,8 +11,7 @@ module VagrantPlugins
           builder.use ConfigValidate
           builder.use ConnectAWS
           puts 'This UP worked'
-          # Reset the connection to avoid it being picked up by other actions
-          Aws.config = {}
+          builder.use DisconnectAWS
         end
       end
     end
