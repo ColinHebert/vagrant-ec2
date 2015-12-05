@@ -11,11 +11,12 @@ module VagrantPlugins
         def call(env)
           Aws.use_bundled_cert!
 
+          env[:connection_options] = {}
           if env[:machine].provider_config.region
-            Aws.config[:region] = env[:machine].provider_config.region
+            env[:connection_options][:region] = env[:machine].provider_config.region
           end
           if env[:machine].provider_config.credentials
-            Aws.config[:credentials] = create_credentials(env[:machine].provider_config.credentials)
+            env[:connection_options][:credentials] = create_credentials(env[:machine].provider_config.credentials)
           end
 
           @app.call(env)

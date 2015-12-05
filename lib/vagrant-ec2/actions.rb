@@ -14,8 +14,6 @@ module VagrantPlugins
             if env[:machine_state] == :not_created
             end
           end
-          puts 'This UP worked'
-          builder.use DisconnectAWS
         end
       end
     end
