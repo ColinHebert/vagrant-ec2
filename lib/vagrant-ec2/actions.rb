@@ -1,3 +1,4 @@
+require 'aws-sdk'
 require_relative 'actions/connect_aws'
 
 module VagrantPlugins
@@ -9,7 +10,9 @@ module VagrantPlugins
         return Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
           builder.use ConnectAWS
-          puts "This UP worked"
+          puts 'This UP worked'
+          # Reset the connection to avoid it being picked up by other actions
+          Aws.config = {}
         end
       end
     end
