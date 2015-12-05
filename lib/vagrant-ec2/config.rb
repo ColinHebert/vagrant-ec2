@@ -13,7 +13,7 @@ module VagrantPlugins
 
       # Credentials used to log in.
       #
-      # @return [String]
+      # @return [Hash]
       attr_accessor :credentials
 
       def initialize
