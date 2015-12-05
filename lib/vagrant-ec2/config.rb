@@ -1,15 +1,24 @@
 module VagrantPlugins
   module Ec2
     class Config < Vagrant.plugin('2', :config)
+      # The ID of the AMI to use.
+      #
+      # @return [String]
       attr_accessor :ami
 
+      # AWS region in which the instances run.
+      #
+      # @return [String]
+      attr_accessor :region
+
       def initialize
-        @ami = UNSET_VALUE
+        @ami    = UNSET_VALUE
+        @region = UNSET_VALUE
       end
 
       def finalize!
-        #Default to "Ubuntu Server 14.04 LTS (HVM), SSD Volume Type"
-        @ami = 'ami-d05e75b8' if @ami == UNSET_VALUE
+        @ami    = nil if @ami == UNSET_VALUE
+        @region = nil if @region == UNSET_VALUE
       end
 
       def validate(machine)
