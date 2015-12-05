@@ -23,8 +23,8 @@ module VagrantPlugins
       end
 
       def finalize!
-        @ami    = nil if @ami == UNSET_VALUE
-        @region = nil if @region == UNSET_VALUE
+        @ami         = nil if @ami == UNSET_VALUE
+        @region      = nil if @region == UNSET_VALUE
         @credentials = nil if @credentials == UNSET_VALUE
       end
 
