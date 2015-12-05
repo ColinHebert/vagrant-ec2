@@ -1,5 +1,6 @@
 require 'aws-sdk'
 require_relative 'actions/connect_aws'
+require_relative 'actions/check_state'
 
 module VagrantPlugins
   module Ec2
