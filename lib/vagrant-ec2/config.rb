@@ -21,11 +21,17 @@ module VagrantPlugins
       # @return [Hash]
       attr_accessor :run_options
 
+      # Tags associated with the instance
+      #
+      # @return [Hash]
+      attr_accessor :tags
+
       def initialize
         @ami         = UNSET_VALUE
         @region      = UNSET_VALUE
         @credentials = UNSET_VALUE
         @run_options = UNSET_VALUE
+        @tags        = UNSET_VALUE
       end
 
       def finalize!
@@ -33,6 +39,7 @@ module VagrantPlugins
         @region      = nil if @region == UNSET_VALUE
         @credentials = nil if @credentials == UNSET_VALUE
         @run_options = nil if @run_options == UNSET_VALUE
+        @tags        = {}  if @tags == UNSET_VALUE
 
         if run_options.is_a?(Hash)
           @run_options[:image_id] = @ami if @ami != nil
@@ -46,6 +53,7 @@ module VagrantPlugins
 
         errors += validate_credentials(@credentials)
         errors += validate_run_options(@run_options)
+        errors << 'Tags should be a hash of key-values' if ! tags.is_a?(Hash)
 
         { 'EC2 Provider' => errors }
       end

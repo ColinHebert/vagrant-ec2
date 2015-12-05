@@ -13,6 +13,14 @@ module VagrantPlugins
 
           instance = ec2.create_instances(env[:machine].provider_config.run_options)[0]
           env[:machine].id = instance.id
+
+          if env[:machine].provider_config.tags.any?
+            ec2.create_tags({
+              resources: [env[:machine].id],
+              tags: env[:machine].provider_config.tags.map { |key, value| {key: key, value: value} },
+            })
+          end
+
           instance.wait_until_running
           env[:machine_state] = instance.state.name.to_sym
           Provider.set_instance_state(env[:machine], env[:machine_state])
