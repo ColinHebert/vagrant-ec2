@@ -1,11 +1,11 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'vagrant/ec2/version'
+require 'vagrant-ec2/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "vagrant-ec2"
-  spec.version       = Vagrant::Ec2::VERSION
+  spec.version       = VagrantPlugins::Ec2::VERSION
   spec.authors       = ["Colin Hebert"]
   spec.email         = ["hebert.colin@gmail.com"]
 
