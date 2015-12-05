@@ -11,6 +11,11 @@ module VagrantPlugins
         require_relative 'config'
         Config
       end
+
+      provider(:ec2) do
+        require_relative 'provider'
+        Provider
+      end
     end
   end
 end
