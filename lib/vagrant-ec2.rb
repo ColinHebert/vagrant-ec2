@@ -1,6 +1,7 @@
 require 'pathname'
 
 require 'vagrant-ec2/version'
+require 'vagrant-ec2/plugin'
 
 module VagrantPlugins
   module Ec2
