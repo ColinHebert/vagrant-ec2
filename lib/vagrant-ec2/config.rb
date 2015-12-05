@@ -16,22 +16,36 @@ module VagrantPlugins
       # @return [Hash]
       attr_accessor :credentials
 
+      # Run options for the instance
+      #
+      # @return [Hash]
+      attr_accessor :run_options
+
       def initialize
         @ami         = UNSET_VALUE
         @region      = UNSET_VALUE
         @credentials = UNSET_VALUE
+        @run_options = UNSET_VALUE
       end
 
       def finalize!
         @ami         = nil if @ami == UNSET_VALUE
         @region      = nil if @region == UNSET_VALUE
         @credentials = nil if @credentials == UNSET_VALUE
+        @run_options = nil if @run_options == UNSET_VALUE
+
+        if run_options.is_a?(Hash)
+          @run_options[:image_id] = @ami if @ami != nil
+          @run_options[:min_count] = 1
+          @run_options[:max_count] = 1
+        end
       end
 
       def validate(machine)
         errors = []
 
         errors += validate_credentials(@credentials)
+        errors += validate_run_options(@run_options)
 
         { 'EC2 Provider' => errors }
       end
@@ -59,6 +73,18 @@ module VagrantPlugins
           errors << 'Invalid credential type {}'
         end
 
+        return errors
+      end
+
+      def validate_run_options(run_options)
+        errors = []
+
+        if run_options == nil || ! run_options.is_a?(Hash)
+          return ['run_options not set properly!']
+        end
+
+        errors << 'image_id not set' if ! run_options[:image_id]
+        errors << 'instance_type not set' if ! run_options[:instance_type]
         return errors
       end
     end
