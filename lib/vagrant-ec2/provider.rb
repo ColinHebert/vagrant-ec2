@@ -3,6 +3,24 @@ require_relative 'actions'
 module VagrantPlugins
   module Ec2
     class Provider < Vagrant.plugin('2', :provider)
+      def self.set_instance_state(machine, instance_state)
+        @instance_states ||= {}
+        @instance_states[machine.id.to_sym] = instance_state
+      end
+
+      def self.get_instance_state(machine)
+        @instance_states ||= {}
+        if ! machine.id
+          state = :not_created
+        elsif @instance_states.has_key?(machine.id.to_sym)
+          state = @instance_states[machine.id.to_sym]
+        else
+          state = machine.action('read_state')[:machine_state]
+        end
+
+        return state
+      end
+
       def initialize(machine)
         @machine = machine
       end
@@ -52,7 +70,9 @@ module VagrantPlugins
       # The state must be an instance of {MachineState}. Please read the
       # documentation of that class for more information.
       def state
-        Vagrant::MachineState.new("state", "Test", "long")
+        state = Provider.get_instance_state(@machine)
+        long = short = state.to_s
+        Vagrant::MachineState.new(state, short, long)
       end
     end
   end

@@ -7,6 +7,14 @@ module VagrantPlugins
     module Actions
       include Vagrant::Action::Builtin
 
+      def self.read_state
+        return Vagrant::Action::Builder.new.tap do |builder|
+          builder.use ConfigValidate
+          builder.use ConnectAWS
+          builder.use CheckState
+        end
+      end
+
       def self.up
         return Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
