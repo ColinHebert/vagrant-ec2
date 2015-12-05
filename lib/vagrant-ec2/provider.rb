@@ -1,3 +1,5 @@
+require_relative 'actions'
+
 module VagrantPlugins
   module Ec2
     class Provider < Vagrant.plugin('2', :provider)
@@ -5,8 +7,9 @@ module VagrantPlugins
         @machine = machine
       end
 
-      def action(name)
-        puts name
+      def action(action_method)
+        return Actions.send(action_method) if Actions.respond_to?(action_method)
+        nil
       end
 
       # This method is called if the underying machine ID changes. Providers
