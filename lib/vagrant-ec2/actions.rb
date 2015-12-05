@@ -1,6 +1,7 @@
 require 'aws-sdk'
 require_relative 'actions/connect_aws'
 require_relative 'actions/check_state'
+require_relative 'actions/run_instance'
 
 module VagrantPlugins
   module Ec2
@@ -21,6 +22,9 @@ module VagrantPlugins
           builder.use ConnectAWS
           builder.use Call, CheckState do |env, b|
             if env[:machine_state] == :not_created
+              b.use RunInstance
+            else
+              puts env[:machine_state]
             end
           end
         end
