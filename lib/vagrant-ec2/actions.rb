@@ -10,6 +10,10 @@ module VagrantPlugins
         return Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
           builder.use ConnectAWS
+          builder.use Call, CheckState do |env, b|
+            if env[:machine_state] == :not_created
+            end
+          end
           puts 'This UP worked'
           builder.use DisconnectAWS
         end
