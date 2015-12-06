@@ -1,0 +1,31 @@
+Vagrant.configure('2') do |config|
+  config.vm.define :ubuntu do |ubuntu|
+    ubuntu.vm.box = 'digital_ocean'
+    ubuntu.vm.box_url = 'https://github.com/smdahlen/vagrant-digitalocean/raw/master/box/digital_ocean.box'
+
+    ubuntu.vm.provider :ec2 do |provider, override|
+      provider.region = 'us-east-1'
+      provider.credentials = {
+        :type    => :shared,
+        :options => { :profile_name => 'staging' },
+      }
+      provider.run_options = {
+        :image_id           => 'ami-d05e75b8',
+        :key_name           => 'elasticbamboo',
+        :instance_type      => 'm4.large',
+        :subnet_id          => ['subnet-c71821ec', 'subnet-2649bd50'].sample,
+        :security_group_ids => ['sg-6c76070a'],
+      }
+      provider.tags = {
+        :Name           => 'Vagrant EC2 provider - Colin',
+        :business_unit  => 'Engineering Services',
+        :service_name   => 'WIP',
+        :resource_owner => 'chebert',
+        :BuiltFrom      => 'Vagrant',
+      }
+
+      override.ssh.username         = 'ubuntu'
+      override.ssh.private_key_path = '/Users/Makkhdyn/Documents/buildeng-puppet/magic-files/all/keys/bellatrix/bamboo-elastic08/ec2.pk'
+    end
+  end
+end
