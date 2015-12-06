@@ -58,11 +58,16 @@ module VagrantPlugins
       # `ssh` prompt with a password, whereas we can pass a private key
       # via commandline.
       def ssh_info
+        if ! @machine.id
+          return {}
+        end
+
+        if !@host
+          @host = @machine.action('find_host')[:machine_host]
+        end
+
         return {
-          :host => '127.0.0.1',
-          :port => '22',
-          :username => 'root',
-          :private_key_path => nil
+          :host => @host
         }
       end
 

@@ -26,20 +26,27 @@ module VagrantPlugins
       # @return [Hash]
       attr_accessor :tags
 
+      # Attribute used to obtain a connection to the host
+      #
+      # @return [Symbol]
+      attr_accessor :host_attribute
+
       def initialize
-        @ami         = UNSET_VALUE
-        @region      = UNSET_VALUE
-        @credentials = UNSET_VALUE
-        @run_options = UNSET_VALUE
-        @tags        = UNSET_VALUE
+        @ami            = UNSET_VALUE
+        @region         = UNSET_VALUE
+        @credentials    = UNSET_VALUE
+        @run_options    = UNSET_VALUE
+        @tags           = UNSET_VALUE
+        @host_attribute = UNSET_VALUE
       end
 
       def finalize!
-        @ami         = nil if @ami == UNSET_VALUE
-        @region      = nil if @region == UNSET_VALUE
-        @credentials = nil if @credentials == UNSET_VALUE
-        @run_options = nil if @run_options == UNSET_VALUE
-        @tags        = {}  if @tags == UNSET_VALUE
+        @ami            = nil if @ami == UNSET_VALUE
+        @region         = nil if @region == UNSET_VALUE
+        @credentials    = nil if @credentials == UNSET_VALUE
+        @run_options    = nil if @run_options == UNSET_VALUE
+        @tags           = {}  if @tags == UNSET_VALUE
+        @host_attribute = nil if @host_attribute == UNSET_VALUE
 
         if run_options.is_a?(Hash)
           @run_options[:image_id] = @ami if @ami != nil

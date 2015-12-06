@@ -2,6 +2,7 @@ require 'aws-sdk'
 require_relative 'actions/connect_aws'
 require_relative 'actions/check_state'
 require_relative 'actions/wait_for_state'
+require_relative 'actions/find_host'
 require_relative 'actions/run_instance'
 require_relative 'actions/start_instance'
 
@@ -15,6 +16,14 @@ module VagrantPlugins
           builder.use ConfigValidate
           builder.use ConnectAWS
           builder.use CheckState
+        end
+      end
+
+      def self.find_host
+        return Vagrant::Action::Builder.new.tap do |builder|
+          builder.use ConfigValidate
+          builder.use ConnectAWS
+          builder.use FindHost
         end
       end
 
