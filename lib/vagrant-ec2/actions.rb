@@ -46,39 +46,19 @@ module VagrantPlugins
         end
       end
 
-      def self.resume
-        return Vagrant::Action::Builder.new.tap do |builder|
-          builder.use ConfigValidate
-          builder.use ConnectAWS
-          builder.use Call, CheckState do |env, b|
-            case env[:result]
-            when :stopped
-              b.use StartInstance
-              b.use WaitForState, :running
-            when :running
-              env[:ui].info I18n.t('vagrant_ec2.info.state.already_running')
-              next
-            when :not_created
-              env[:ui].info I18n.t('vagrant_ec2.info.state.not_created')
-              next
-            else
-              env[:ui].info I18n.t('vagrant_ec2.info.state.unexpected_state', :state => env[:result])
-              next
-            end
-          end
-        end
-      end
-
       # Stops the running instance
-      def self.suspend
+      def self.halt
         return Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
           builder.use ConnectAWS
           builder.use Call, CheckState do |env, b|
             case env[:result]
             when :running
-              b.use StopInstance
-              b.use WaitForState, :stopped
+              b.use Call, GracefulHalt, :not_created, :running do |env2, b2|
+                next if env2[:result]
+                b2.use StopInstance
+                b2.use WaitForState, :stopped
+              end
             when :stopped
               env[:ui].info I18n.t('vagrant_ec2.info.state.already_stopped')
               next
