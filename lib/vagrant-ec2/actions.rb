@@ -49,12 +49,17 @@ module VagrantPlugins
           builder.use ConnectAWS
           builder.use Call, CheckState do |env, b|
             case env[:result]
-            when :stopped, :stopping
-              b.use WaitForState, :stopped if env[:result] == :stopping
+            when :stopped
               b.use StartInstance
               b.use WaitForState, :running
             when :running
               env[:ui].info I18n.t('vagrant_ec2.info.state.already_running')
+              next
+            when :not_created
+              env[:ui].info I18n.t('vagrant_ec2.info.state.not_created')
+              next
+            else
+              env[:ui].info I18n.t('vagrant_ec2.info.state.unexpected_state', :state => env[:result])
               next
             end
           end
@@ -113,8 +118,7 @@ module VagrantPlugins
             case env[:result]
             when :not_created
               b.use RunInstance
-            when :stopped, :stopping
-              b.use WaitForState, :stopped if env[:result] == :stopping
+            when :stopped
               b.use StartInstance
             when :running
               env[:ui].info I18n.t('vagrant_ec2.info.state.already_running')
