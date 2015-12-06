@@ -5,7 +5,11 @@ module VagrantPlugins
     class Provider < Vagrant.plugin('2', :provider)
       def self.set_instance_state(machine, instance_state)
         @instance_states ||= {}
-        @instance_states[machine.id.to_sym] = instance_state
+        if instance_state != :not_created
+          @instance_states[machine.id.to_sym] = instance_state
+        else
+          @instance_states.delete(machine.id.to_sym)
+        end
       end
 
       def self.get_instance_state(machine)
@@ -15,7 +19,7 @@ module VagrantPlugins
         elsif @instance_states.has_key?(machine.id.to_sym)
           state = @instance_states[machine.id.to_sym]
         else
-          state = machine.action('read_state')[:machine_state]
+          state = machine.action('read_state')[:result]
         end
 
         return state
@@ -62,13 +66,8 @@ module VagrantPlugins
           return {}
         end
 
-        if !@host
-          @host = @machine.action('find_host')[:machine_host]
-        end
-
-        return {
-          :host => @host
-        }
+        @host = @machine.action('find_host')[:result] if !@host
+        return {:host => @host}
       end
 
       # This should return the state of the machine within this provider.

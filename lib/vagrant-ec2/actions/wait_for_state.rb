@@ -15,19 +15,17 @@ module VagrantPlugins
 
           if @state == :running
             instance.wait_until_running
-            env[:machine_state] = instance.state.name.to_sym
+            Provider.set_instance_state(env[:machine], instance.state.name.to_sym])
           elsif @state == :stopped
             instance.wait_until_stopped
-            env[:machine_state] = instance.state.name.to_sym
+            Provider.set_instance_state(env[:machine], instance.state.name.to_sym])
           elsif @state == :terminated
             instance.wait_until_terminated
-            env[:machine_state] = :not_created
+            Provider.set_instance_state(env[:machine], :not_created])
+            env[:machine].id = nil
           else
-            #Lolwut?
+            #TODO: Lolwut?
           end
-
-          Provider.set_instance_state(env[:machine], env[:machine_state])
-          env[:machine].id = nil if env[:machine_state] === :not_created
 
           @app.call(env)
         end

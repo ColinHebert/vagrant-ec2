@@ -4,24 +4,23 @@ module VagrantPlugins
   module Ec2
     module Actions
       class CheckState
-        def initialize(app, env)
+        def initialize(app, env, refresh = false)
           @app = app
+          @refresh = refresh
         end
 
         def call(env)
-          if ! env[:machine].id
-            env[:machine_state] = :not_created
-          elsif ! env[:machine_state]
+          if refresh && env[:machine].id
             ec2 = Aws::EC2::Resource.new(env[:connection_options])
             instance = ec2.instance(env[:machine].id)
-            if ! instance.exists? || instance.state.name == "shutting-down" || instance.state.name == "terminated"
-              env[:machine_state] = :not_created
+            if instance.exists? && instance.state.name != "shutting-down" && instance.state.name != "terminated"
+              Provider.set_instance_state(env[:machine], instance.state.name.to_sym])
             else
-              env[:machine_state] = instance.state.name.to_sym
+              Provider.set_instance_state(env[:machine], :not_created])
+              env[:machine].id = nil
             end
-            Provider.set_instance_state(env[:machine], env[:machine_state])
-            env[:machine].id = nil if env[:machine_state] === :not_created
           end
+          env[:result] = Provider.get_instance_state(env[:machine])
 
           @app.call(env)
         end

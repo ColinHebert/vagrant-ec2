@@ -16,7 +16,7 @@ module VagrantPlugins
         return Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
           builder.use ConnectAWS
-          builder.use CheckState
+          builder.use CheckState, true
         end
       end
 
@@ -33,14 +33,14 @@ module VagrantPlugins
           builder.use ConfigValidate
           builder.use ConnectAWS
           builder.use Call, CheckState do |env, b|
-            if env[:machine_state] == :stopped || env[:machine_state] == :stopping
-              b.use WaitForState, :stopped if env[:machine_state] == :stopping
+            if env[:result] == :stopped || env[:result] == :stopping
+              b.use WaitForState, :stopped if env[:result] == :stopping
               b.use StartInstance
               b.use WaitForState, :running
-            elsif env[:machine_state] == :running
-              raise env[:machine_state]
+            elsif env[:result] == :running
+              raise env[:result]
             else
-              raise "The instance #{env[:machine].id} is #{env[:machine_state]} this is unexpected"
+              raise "The instance #{env[:machine].id} is #{env[:result]} this is unexpected"
             end
           end
         end
@@ -52,8 +52,8 @@ module VagrantPlugins
             if env[:result]
               b.use ConfigValidate
               b.use ConnectAWS
-              b.use Call, CheckState do |env, b2|
-                if env[:machine_state] != :not_created
+              b.use Call, CheckState do |env2, b2|
+                if env2[:result] != :not_created
                   b2.use TerminateInstance
                   b2.use WaitForState, :terminated
                 end
@@ -70,16 +70,16 @@ module VagrantPlugins
           builder.use ConfigValidate
           builder.use ConnectAWS
           builder.use Call, CheckState do |env, b|
-            if env[:machine_state] == :not_created
+            if env[:result] == :not_created
               b.use RunInstance
-            elsif env[:machine_state] == :stopped || env[:machine_state] == :stopping
-              b.use WaitForState, :stopped if env[:machine_state] == :stopping
+            elsif env[:result] == :stopped || env[:result] == :stopping
+              b.use WaitForState, :stopped if env[:result] == :stopping
               b.use StartInstance
             else
-              if env[:machine_state] == :running
-                raise env[:machine_state]
+              if env[:result] == :running
+                raise env[:result]
               else
-                raise "The instance #{env[:machine].id} is #{env[:machine_state]} this is unexpected"
+                raise "The instance #{env[:machine].id} is #{env[:result]} this is unexpected"
               end
             end
             b.use WaitForState, :running
