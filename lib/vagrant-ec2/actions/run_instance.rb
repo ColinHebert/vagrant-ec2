@@ -21,10 +21,6 @@ module VagrantPlugins
             })
           end
 
-          instance.wait_until_running
-          env[:machine_state] = instance.state.name.to_sym
-          Provider.set_instance_state(env[:machine], env[:machine_state])
-
           @app.call(env)
         end
       end

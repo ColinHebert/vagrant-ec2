@@ -1,6 +1,7 @@
 require 'aws-sdk'
 require_relative 'actions/connect_aws'
 require_relative 'actions/check_state'
+require_relative 'actions/wait_for_state'
 require_relative 'actions/run_instance'
 
 module VagrantPlugins
@@ -24,8 +25,13 @@ module VagrantPlugins
             if env[:machine_state] == :not_created
               b.use RunInstance
             else
-              puts env[:machine_state]
+              if env[:machine_state] == :running
+                raise env[:machine_state]
+              else
+                raise "The instance #{env[:machine].id} is #{env[:machine_state]} this is unexpected"
+              end
             end
+            b.use WaitForState, :running
           end
         end
       end
