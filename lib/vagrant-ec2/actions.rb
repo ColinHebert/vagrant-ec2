@@ -13,6 +13,7 @@ module VagrantPlugins
     module Actions
       include Vagrant::Action::Builtin
 
+      # Checks the state of the instance and caches it for later usage
       def self.read_state
         return Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
@@ -21,6 +22,7 @@ module VagrantPlugins
         end
       end
 
+      # Checks the ip/hostname of the instance used for SSH access
       def self.find_host
         return Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
@@ -29,6 +31,7 @@ module VagrantPlugins
         end
       end
 
+      # Creates a SSH connection to the instance
       def self.ssh
         Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
@@ -66,6 +69,7 @@ module VagrantPlugins
         end
       end
 
+      # Stops the running instance
       def self.suspend
         return Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
@@ -89,6 +93,7 @@ module VagrantPlugins
         end
       end
 
+      # Terminates the instance
       def self.destroy
         return Vagrant::Action::Builder.new.tap do |builder|
           builder.use Call, DestroyConfirm do |env, b|
@@ -110,6 +115,7 @@ module VagrantPlugins
         end
       end
 
+      # Creates a new instance or starts the stopped instance
       def self.up
         return Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
