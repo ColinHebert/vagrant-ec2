@@ -10,13 +10,13 @@ module VagrantPlugins
         end
 
         def call(env)
-          if refresh && env[:machine].id
+          if @refresh && env[:machine].id
             ec2 = Aws::EC2::Resource.new(env[:connection_options])
             instance = ec2.instance(env[:machine].id)
             if instance.exists? && instance.state.name != "shutting-down" && instance.state.name != "terminated"
-              Provider.set_instance_state(env[:machine], instance.state.name.to_sym])
+              Provider.set_instance_state(env[:machine], instance.state.name.to_sym)
             else
-              Provider.set_instance_state(env[:machine], :not_created])
+              Provider.set_instance_state(env[:machine], :not_created)
               env[:machine].id = nil
             end
           end
