@@ -21,13 +21,13 @@ module VagrantPlugins
             env[:machine_state] = instance.state.name.to_sym
           elsif @state == :terminated
             instance.wait_until_terminated
-            env[:machine].id = nil
             env[:machine_state] = :not_created
           else
             #Lolwut?
           end
 
           Provider.set_instance_state(env[:machine], env[:machine_state])
+          env[:machine].id = nil if env[:machine_state] === :not_created
 
           @app.call(env)
         end
