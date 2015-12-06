@@ -24,20 +24,21 @@ module VagrantPlugins
 
         def create_credentials(credentials)
           obtained_credentials = nil
-          if credentials[:type] == :credentials
+          case credentials[:type]
+          when :credentials
             # Basic credentials
             obtained_credentials = Aws::Credentials.new(
               credentials[:access_key_id],
               credentials[:secret_access_key],
               credentials[:session_token]
             )
-          elsif credentials[:type] == :shared
+          when :shared
             # Shared credentials from AWS-CLI
             obtained_credentials = Aws::SharedCredentials.new(credentials[:options])
-          elsif credentials[:type] == :instance_profile
+          when :instance_profile
             # Instance profile credentials
             obtained_credentials = Aws::InstanceProfileCredentials.new(credentials[:options])
-          elsif credentials[:type] == :assume_role
+          when :assume_role
             # Assume role
 
             # Obtain nested credentials to assume role

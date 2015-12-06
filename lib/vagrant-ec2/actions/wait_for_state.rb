@@ -13,13 +13,14 @@ module VagrantPlugins
           ec2 = Aws::EC2::Resource.new(env[:connection_options])
           instance = ec2.instance(env[:machine].id)
 
-          if @state == :running
+          case @state
+          when :running
             instance.wait_until_running
             Provider.set_instance_state(env[:machine], instance.state.name.to_sym)
-          elsif @state == :stopped
+          when :stopped
             instance.wait_until_stopped
             Provider.set_instance_state(env[:machine], instance.state.name.to_sym)
-          elsif @state == :terminated
+          when :terminated
             instance.wait_until_terminated
             Provider.set_instance_state(env[:machine], :not_created)
             env[:machine].id = nil

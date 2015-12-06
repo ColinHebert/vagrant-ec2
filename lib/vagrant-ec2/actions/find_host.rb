@@ -13,13 +13,14 @@ module VagrantPlugins
             ec2 = Aws::EC2::Resource.new(env[:connection_options])
             instance = ec2.instance(env[:machine].id)
 
-            if env[:machine].provider_config.host_attribute == :public_ip
+            case env[:machine].provider_config.host_attribute
+            when :public_ip
               env[:result] = instance.public_ip_address
-            elsif env[:machine].provider_config.host_attribute == :public_dns
+            when :public_dns
               env[:result] = instance.public_dns_name
-            elsif env[:machine].provider_config.host_attribute == :private_ip
+            when :private_ip
               env[:result] = instance.private_ip_address
-            elsif env[:machine].provider_config.host_attribute == :private_dns
+            when :private_dns
               env[:result] = instance.private_dns_name
             else
               env[:result] = instance.public_ip_address

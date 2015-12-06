@@ -45,11 +45,12 @@ module VagrantPlugins
           builder.use ConfigValidate
           builder.use ConnectAWS
           builder.use Call, CheckState do |env, b|
-            if env[:result] == :stopped || env[:result] == :stopping
+            case env[:result]
+            when :stopped, :stopping
               b.use WaitForState, :stopped if env[:result] == :stopping
               b.use StartInstance
               b.use WaitForState, :running
-            elsif env[:result] == :running
+            when :running
               raise env[:result]
             else
               raise "The instance #{env[:machine].id} is #{env[:result]} this is unexpected"
@@ -82,9 +83,10 @@ module VagrantPlugins
           builder.use ConfigValidate
           builder.use ConnectAWS
           builder.use Call, CheckState do |env, b|
-            if env[:result] == :not_created
+            case env[:result]
+            when :not_created
               b.use RunInstance
-            elsif env[:result] == :stopped || env[:result] == :stopping
+            when :stopped, :stopping
               b.use WaitForState, :stopped if env[:result] == :stopping
               b.use StartInstance
             else
