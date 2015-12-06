@@ -1,10 +1,19 @@
 en:
   vagrant_ec2:
     info:
-      not_created: The instance hasn't been created
-      not_running: The instance is not running
-      already_running: The instance is already running
-      unexpected_state: Unexpected state '%{state}'
       not_destroying: The instance won't be destroyed
+      state:
+        not_created: The instance hasn't been created yet
+        not_running: The instance is not running
+        not_stopped: The instance is not stopped
+        already_running: The instance is already running
+        already_stopped: The instance is already stopped
+        unexpected_state: Unexpected state '%{state}'
+      action:
+        run_instance: Creating a new instance '%{instance_id}'
+        start_instance: Starting the instance '%{instance_id}'
+        stop_instance: Stopping the instance '%{instance_id}'
+        terminate_instance: Terminating the instance '%{instance_id}'
+        wait_for_state: Waiting for the instance to become '%{state}'
     config:
     errors:

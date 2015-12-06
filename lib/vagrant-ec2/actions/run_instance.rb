@@ -20,6 +20,7 @@ module VagrantPlugins
               tags: env[:machine].provider_config.tags.map { |key, value| {key: key, value: value} },
             })
           end
+          env[:ui].info I18n.t('vagrant_ec2.info.action.run_instance', :instance_id => env[:machine].id)
 
           @app.call(env)
         end

@@ -13,6 +13,7 @@ module VagrantPlugins
 
           instance = ec2.instance(env[:machine].id)
           instance.start
+          env[:ui].info I18n.t('vagrant_ec2.info.action.start_instance', :instance_id => env[:machine].id)
 
           @app.call(env)
         end

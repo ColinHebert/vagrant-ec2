@@ -1,11 +1,11 @@
 require 'aws-sdk'
-require_relative 'actions/connect_aws'
 require_relative 'actions/check_state'
-require_relative 'actions/wait_for_state'
+require_relative 'actions/connect_aws'
 require_relative 'actions/find_host'
 require_relative 'actions/run_instance'
 require_relative 'actions/start_instance'
 require_relative 'actions/terminate_instance'
+require_relative 'actions/wait_for_state'
 
 module VagrantPlugins
   module Ec2
@@ -34,7 +34,7 @@ module VagrantPlugins
           builder.use ConnectAWS
           builder.use Call, CheckState do |env, b|
             if env[:result] != :running
-              env[:ui].info I18n.t('vagrant_ec2.info.not_running')
+              env[:ui].info I18n.t('vagrant_ec2.info.state.not_running')
               next
             end
             b.use SSHExec
@@ -53,10 +53,10 @@ module VagrantPlugins
               b.use StartInstance
               b.use WaitForState, :running
             when :running
-              env[:ui].info I18n.t('vagrant_ec2.info.already_running')
+              env[:ui].info I18n.t('vagrant_ec2.info.state.already_running')
               next
             else
-              env[:ui].info I18n.t('vagrant_ec2.info.unexpected_state', :state => env[:result].to_s)
+              env[:ui].info I18n.t('vagrant_ec2.info.state.unexpected_state', :state => env[:result])
               next
             end
           end
@@ -73,10 +73,12 @@ module VagrantPlugins
             b.use ConfigValidate
             b.use ConnectAWS
             b.use Call, CheckState do |env2, b2|
-              if env2[:result] != :not_created
-                b2.use TerminateInstance
-                b2.use WaitForState, :terminated
+              if env2[:result] == :not_created
+                env[:ui].info I18n.t('vagrant_ec2.info.state.not_created')
+                next
               end
+              b2.use TerminateInstance
+              b2.use WaitForState, :terminated
             end
           end
         end
@@ -94,10 +96,10 @@ module VagrantPlugins
               b.use WaitForState, :stopped if env[:result] == :stopping
               b.use StartInstance
             when :running
-              env[:ui].info I18n.t('vagrant_ec2.info.already_running')
+              env[:ui].info I18n.t('vagrant_ec2.info.state.already_running')
               next
             else
-              env[:ui].info I18n.t('vagrant_ec2.info.unexpected_state', :state => env[:result].to_s)
+              env[:ui].info I18n.t('vagrant_ec2.info.state.unexpected_state', :state => env[:result])
               next
             end
             b.use WaitForState, :running

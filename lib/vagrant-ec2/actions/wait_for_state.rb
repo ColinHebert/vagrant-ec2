@@ -13,6 +13,8 @@ module VagrantPlugins
           ec2 = Aws::EC2::Resource.new(env[:connection_options])
           instance = ec2.instance(env[:machine].id)
 
+          env[:ui].info I18n.t('vagrant_ec2.info.action.wait_for_state', :state => @state)
+
           case @state
           when :running
             instance.wait_until_running
