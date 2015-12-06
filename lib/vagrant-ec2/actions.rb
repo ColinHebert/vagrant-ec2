@@ -85,7 +85,7 @@ module VagrantPlugins
             b.use ConnectAWS
             b.use Call, CheckState do |env2, b2|
               if env2[:result] == :not_created
-                env[:ui].info I18n.t('vagrant_ec2.info.state.not_created')
+                env2[:ui].info I18n.t('vagrant_ec2.info.state.not_created')
                 next
               end
               b2.use TerminateInstance
