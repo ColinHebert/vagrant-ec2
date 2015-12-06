@@ -28,6 +28,18 @@ module VagrantPlugins
         end
       end
 
+      def self.ssh
+        Vagrant::Action::Builder.new.tap do |builder|
+          builder.use ConfigValidate
+          builder.use ConnectAWS
+          builder.use Call, CheckState do |env, b|
+            if env[:result] == :running
+              b.use SSHExec
+            end
+          end
+        end
+      end
+
       def self.resume
         return Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
