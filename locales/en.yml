@@ -1,0 +1,10 @@
+en:
+  vagrant_ec2:
+    info:
+      not_created: The instance hasn't been created
+      not_running: The instance is not running
+      already_running: The instance is already running
+      unexpected_state: Unexpected state '%{state}'
+      not_destroying: The instance won't be destroyed
+    config:
+    errors:

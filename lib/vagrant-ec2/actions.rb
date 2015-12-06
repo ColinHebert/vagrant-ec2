@@ -33,9 +33,11 @@ module VagrantPlugins
           builder.use ConfigValidate
           builder.use ConnectAWS
           builder.use Call, CheckState do |env, b|
-            if env[:result] == :running
-              b.use SSHExec
+            if env[:result] != :running
+              env[:ui].info I18n.t('vagrant_ec2.info.not_running')
+              next
             end
+            b.use SSHExec
           end
         end
       end
@@ -51,9 +53,11 @@ module VagrantPlugins
               b.use StartInstance
               b.use WaitForState, :running
             when :running
-              raise env[:result]
+              env[:ui].info I18n.t('vagrant_ec2.info.already_running')
+              next
             else
-              raise "The instance #{env[:machine].id} is #{env[:result]} this is unexpected"
+              env[:ui].info I18n.t('vagrant_ec2.info.unexpected_state', :state => env[:result].to_s)
+              next
             end
           end
         end
@@ -62,17 +66,17 @@ module VagrantPlugins
       def self.destroy
         return Vagrant::Action::Builder.new.tap do |builder|
           builder.use Call, DestroyConfirm do |env, b|
-            if env[:result]
-              b.use ConfigValidate
-              b.use ConnectAWS
-              b.use Call, CheckState do |env2, b2|
-                if env2[:result] != :not_created
-                  b2.use TerminateInstance
-                  b2.use WaitForState, :terminated
-                end
+            if !env[:result]
+              env[:ui].info I18n.t('vagrant_ec2.info.not_destroying')
+              next
+            end
+            b.use ConfigValidate
+            b.use ConnectAWS
+            b.use Call, CheckState do |env2, b2|
+              if env2[:result] != :not_created
+                b2.use TerminateInstance
+                b2.use WaitForState, :terminated
               end
-            else
-              puts "Welp no destroy"
             end
           end
         end
@@ -89,12 +93,12 @@ module VagrantPlugins
             when :stopped, :stopping
               b.use WaitForState, :stopped if env[:result] == :stopping
               b.use StartInstance
+            when :running
+              env[:ui].info I18n.t('vagrant_ec2.info.already_running')
+              next
             else
-              if env[:result] == :running
-                raise env[:result]
-              else
-                raise "The instance #{env[:machine].id} is #{env[:result]} this is unexpected"
-              end
+              env[:ui].info I18n.t('vagrant_ec2.info.unexpected_state', :state => env[:result].to_s)
+              next
             end
             b.use WaitForState, :running
           end
