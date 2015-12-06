@@ -46,6 +46,21 @@ module VagrantPlugins
         end
       end
 
+      # Creates a SSH connection to the instance
+      def self.ssh_run
+        Vagrant::Action::Builder.new.tap do |builder|
+          builder.use ConfigValidate
+          builder.use ConnectAWS
+          builder.use Call, CheckState do |env, b|
+            if env[:result] != :running
+              env[:ui].info I18n.t('vagrant_ec2.info.state.not_running')
+              next
+            end
+            b.use SSHRun
+          end
+        end
+      end
+
       # Stops the running instance
       def self.halt
         return Vagrant::Action::Builder.new.tap do |builder|
