@@ -1,4 +1,4 @@
-require_relative 'actions'
+require_relative 'action'
 
 module VagrantPlugins
   module Ec2

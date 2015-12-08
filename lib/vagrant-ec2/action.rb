@@ -1,12 +1,12 @@
 require 'aws-sdk'
-require_relative 'actions/check_state'
-require_relative 'actions/connect_aws'
-require_relative 'actions/find_host'
-require_relative 'actions/run_instance'
-require_relative 'actions/start_instance'
-require_relative 'actions/stop_instance'
-require_relative 'actions/terminate_instance'
-require_relative 'actions/wait_for_state'
+require_relative 'action/check_state'
+require_relative 'action/connect_aws'
+require_relative 'action/find_host'
+require_relative 'action/run_instance'
+require_relative 'action/start_instance'
+require_relative 'action/stop_instance'
+require_relative 'action/terminate_instance'
+require_relative 'action/wait_for_state'
 
 module VagrantPlugins
   module Ec2
