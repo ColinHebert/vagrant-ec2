@@ -84,6 +84,34 @@ module VagrantPlugins
         end
       end
 
+      # Restarts the running instance
+      def self.reload
+        Vagrant::Action::Builder.new.tap do |builder|
+          builder.use ConfigValidate
+          builder.use ConnectAWS
+          builder.use Call, CheckState do |env, b|
+            case env[:result]
+            when :running
+              b.use Provision
+              b.use SyncedFolders
+              b.use Call, GracefulHalt, :not_created, :running do |env2, b2|
+                next if env2[:result]
+                b2.use StopInstance
+                b2.use WaitForState, :stopped
+              end
+              b.use StartInstance
+              b.use WaitForState, :running
+            when :stopped, :not_created
+              env[:ui].info I18n.t('vagrant_ec2.info.state.not_running')
+              next
+            else
+              env[:ui].info I18n.t('vagrant_ec2.info.state.unexpected_state', :state => env[:result])
+              next
+            end
+          end
+        end
+      end
+
       # Stops the running instance
       def self.halt
         Vagrant::Action::Builder.new.tap do |builder|
