@@ -61,6 +61,29 @@ module VagrantPlugins
         end
       end
 
+      # Runs the provisionning
+      def self.provision
+        Vagrant::Action::Builder.new.tap do |builder|
+          builder.use ConfigValidate
+          builder.use ConnectAWS
+          builder.use Call, CheckState do |env, b|
+            case env[:result]
+            when :running
+              b.use Provision
+            when :stopped
+              env[:ui].info I18n.t('vagrant_ec2.info.state.already_stopped')
+              next
+            when :not_created
+              env[:ui].info I18n.t('vagrant_ec2.info.state.not_created')
+              next
+            else
+              env[:ui].info I18n.t('vagrant_ec2.info.state.unexpected_state', :state => env[:result])
+              next
+            end
+          end
+        end
+      end
+
       # Stops the running instance
       def self.halt
         Vagrant::Action::Builder.new.tap do |builder|
