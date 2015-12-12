@@ -15,7 +15,7 @@ module VagrantPlugins
 
       # Checks the state of the instance and caches it for later usage
       def self.read_state
-        return Vagrant::Action::Builder.new.tap do |builder|
+        Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
           builder.use ConnectAWS
           builder.use CheckState, true
@@ -24,7 +24,7 @@ module VagrantPlugins
 
       # Checks the ip/hostname of the instance used for SSH access
       def self.find_host
-        return Vagrant::Action::Builder.new.tap do |builder|
+        Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
           builder.use ConnectAWS
           builder.use FindHost
@@ -63,7 +63,7 @@ module VagrantPlugins
 
       # Stops the running instance
       def self.halt
-        return Vagrant::Action::Builder.new.tap do |builder|
+        Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
           builder.use ConnectAWS
           builder.use Call, CheckState do |env, b|
@@ -90,7 +90,7 @@ module VagrantPlugins
 
       # Terminates the instance
       def self.destroy
-        return Vagrant::Action::Builder.new.tap do |builder|
+        Vagrant::Action::Builder.new.tap do |builder|
           builder.use Call, DestroyConfirm do |env, b|
             if !env[:result]
               env[:ui].info I18n.t('vagrant_ec2.info.not_destroying')
@@ -112,7 +112,7 @@ module VagrantPlugins
 
       # Creates a new instance or starts the stopped instance
       def self.up
-        return Vagrant::Action::Builder.new.tap do |builder|
+        Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
           builder.use ConnectAWS
           builder.use Call, CheckState do |env, b|
