@@ -28,4 +28,9 @@ Vagrant.configure('2') do |config|
       override.ssh.private_key_path = '/Users/Makkhdyn/Documents/buildeng-puppet/magic-files/all/keys/bellatrix/bamboo-elastic08/ec2.pk'
     end
   end
+
+  config.vm.provision "shell", inline: "whoami && ls /vagrant"
+
+  config.vm.synced_folder ".", "/vagrant", type: "rsync", rsync__exclude: ".git/"
+
 end

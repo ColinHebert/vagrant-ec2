@@ -61,7 +61,7 @@ module VagrantPlugins
         end
       end
 
-      # Runs the provisionning
+      # Runs the provisioning
       def self.provision
         Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
@@ -169,8 +169,12 @@ module VagrantPlugins
           builder.use Call, CheckState do |env, b|
             case env[:result]
             when :not_created
+              b.use Provision
+              b.use SyncedFolders
               b.use RunInstance
             when :stopped
+              b.use Provision
+              b.use SyncedFolders
               b.use StartInstance
             when :running
               env[:ui].info I18n.t('vagrant_ec2.info.state.already_running')
