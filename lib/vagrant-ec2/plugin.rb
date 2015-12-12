@@ -7,12 +7,12 @@ module VagrantPlugins
         using the AWS API.
       DESC
 
-      config(:ec2, :provider) do
+      config(:aws, :provider) do
         require_relative 'config'
         Config
       end
 
-      provider(:ec2) do
+      provider(:aws) do
         require_relative 'provider'
         Provider
       end

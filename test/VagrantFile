@@ -3,7 +3,7 @@ Vagrant.configure('2') do |config|
     ubuntu.vm.box = 'digital_ocean'
     ubuntu.vm.box_url = 'https://github.com/smdahlen/vagrant-digitalocean/raw/master/box/digital_ocean.box'
 
-    ubuntu.vm.provider :ec2 do |provider, override|
+    ubuntu.vm.provider :aws do |provider, override|
       provider.region = 'us-east-1'
       provider.credentials = {
         :type    => :shared,
